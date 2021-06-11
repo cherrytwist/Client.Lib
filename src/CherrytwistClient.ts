@@ -19,11 +19,13 @@ import { AuthInfo } from 'src';
 import { KratosPublicApiClient } from './util/kratos.public.api.client';
 
 export class CherrytwistClient {
+  public apiToken: string;
   public config!: ClientConfig;
   private client!: Sdk;
   private errorHandler: ErrorHandler;
 
   constructor(config: ClientConfig) {
+    this.apiToken = '';
     this.config = config;
     const client = new GraphQLClient(this.config.graphqlEndpoint);
     this.client = getSdk(client);
@@ -49,8 +51,8 @@ export class CherrytwistClient {
 
   private async getApiToken(authInfo: AuthInfo): Promise<string> {
     const authClient = new KratosPublicApiClient(authInfo.apiEndpointFactory);
-
-    return await authClient.authenticate(authInfo.credentials);
+    this.apiToken = await authClient.authenticate(authInfo.credentials);
+    return this.apiToken;
   }
 
   public async getKratosPublicApiEndpoint(): Promise<string> {
